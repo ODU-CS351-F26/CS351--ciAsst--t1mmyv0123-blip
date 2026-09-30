@@ -24,4 +24,7 @@
 <error line="50" column="5" severity="info" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.MissingJavadocMethodCheck"/>
 <error line="59" column="5" severity="info" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.MissingJavadocMethodCheck"/>
 </file>
+<file name="/home/runner/work/CS351--ciAsst--t1mmyv0123-blip/CS351--ciAsst--t1mmyv0123-blip/src/main/java/CIAsst.java">
+<error line="1" column="1" severity="info" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.MissingJavadocTypeCheck"/>
+</file>
 </checkstyle>
