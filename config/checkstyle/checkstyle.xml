@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+    "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<!--
+    A small, permissive style ruleset for the CI/static-analysis assignment.
+    Everything is reported at "warning" (or lower) severity so that the
+    Gradle build never fails because of it; the point of this report is to
+    be published on the project website, not to gate the build.
+-->
+<module name="Checker">
+    <property name="severity" value="warning"/>
+
+    <module name="LineLength">
+        <property name="max" value="120"/>
+        <property name="severity" value="warning"/>
+    </module>
+
+    <module name="TreeWalker">
+        <module name="UnusedImports">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="RedundantImport">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="EmptyBlock">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="NeedBraces">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="WhitespaceAfter">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="MissingJavadocMethod">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="MissingJavadocType">
+            <property name="severity" value="info"/>
+        </module>
+    </module>
+</module>

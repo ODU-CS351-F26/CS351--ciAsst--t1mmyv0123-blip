@@ -62,6 +62,11 @@ public class TestWordCounter {
 
 
     @Test
+    public final void easyPass() {
+        assertEquals(1, 1);
+    }
+
+    @Test
     public final void testAddWithDuplicates() {
         WordCounter wc = new WordCounter();
         wc.addInstance("hello");

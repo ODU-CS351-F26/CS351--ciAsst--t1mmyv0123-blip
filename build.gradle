@@ -1,6 +1,7 @@
 plugins {
    id 'java'
    id 'application'
+   id 'checkstyle'
    id 'org.ajoberstar.git-publish' version '4.2.0'
 }
 
@@ -17,6 +18,7 @@ java {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
     testImplementation 'org.hamcrest:hamcrest-library:2.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.withType(Test) {
@@ -31,3 +33,71 @@ application { //Allows  ./gradlew run --args=path-to-test-data
     mainClass = 'edu.odu.cs.MostCommonWords'
 }
 
+// --- Static analysis (CheckStyle) -------------------------------------------
+// Only analyze src/main/java, not src/test/java.
+checkstyle {
+    toolVersion = '10.12.4'
+    configFile = file('config/checkstyle/checkstyle.xml')
+    ignoreFailures = true
+    maxWarnings = Integer.MAX_VALUE
+}
+
+checkstyleTest.enabled = false
+
+checkstyleMain {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+// --- Report generation --------------------------------------------------------
+// Copy the hand-written report index page into build/reports
+task copyHtmlToReports(type: Copy) {
+    from 'src/main/html'
+    into "$buildDir/reports"
+}
+
+// Copy the generated javadoc into build/reports/javadoc
+task copyDocsToReports(type: Copy) {
+    dependsOn javadoc
+    from "$buildDir/docs"
+    into "$buildDir/reports"
+}
+
+// Assemble build/reports/ so that it contains index.md, tests/, javadoc/,
+// and checkstyle/ (the last two are already written there directly by the
+// "javadoc" and "checkstyleMain" tasks; only index.md needs copying in).
+task reports {
+    dependsOn build
+    dependsOn checkstyleMain
+    dependsOn copyHtmlToReports
+    dependsOn copyDocsToReports
+}
+
+// --- Deployment to GitHub Pages (gh-pages branch) ----------------------------
+// Locally, push over SSH using your own configured key. In GitHub Actions,
+// there is no SSH key available, so we instead push over HTTPS using the
+// automatically-provided GITHUB_TOKEN (must be passed through as an env
+// var named GITHUB_TOKEN by the workflow step that runs deployReports).
+def ghToken = System.getenv('GITHUB_TOKEN')
+def isCI = System.getenv('GITHUB_ACTIONS') == 'true'
+
+gitPublish {
+    repoUri = (isCI && ghToken) ?
+        "https://x-access-token:${ghToken}@github.com/ODU-CS351-F26/CS351--ciAsst--t1mmyv0123-blip.git" :
+        'git@github.com:ODU-CS351-F26/CS351--ciAsst--t1mmyv0123-blip.git'
+    branch = 'gh-pages'
+    contents {
+        from "$buildDir/reports"
+    }
+    commitMessage = 'Publish reports'
+}
+
+// gitPublishCopy must not run until build/reports/ has been fully assembled,
+// or it will publish an empty/incomplete directory.
+gitPublishCopy.dependsOn reports
+
+task deployReports {
+    dependsOn gitPublishPush
+}
